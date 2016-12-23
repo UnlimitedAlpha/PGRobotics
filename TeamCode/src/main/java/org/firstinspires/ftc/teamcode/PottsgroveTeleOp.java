@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 //test edit
-
+@TeleOp(name = "PottsgroveTeleOp")
 public class PottsgroveTeleOp extends OpMode{
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -62,8 +62,12 @@ public class PottsgroveTeleOp extends OpMode{
         telemetry.addData("Status", "Running: " + runtime.toString());
 
         // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
-        leftMotor.setPower(-gamepad1.left_trigger);
+        leftMotor.setPower(gamepad1.left_trigger);
         rightMotor.setPower(-gamepad1.right_trigger);
+        if(gamepad1.left_bumper)
+            leftMotor.setPower(-10);
+        if(gamepad1.right_bumper)
+            rightMotor.setPower(10);
     }
 
     /*
