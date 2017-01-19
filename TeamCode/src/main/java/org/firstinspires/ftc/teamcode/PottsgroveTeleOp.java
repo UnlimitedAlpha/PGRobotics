@@ -15,8 +15,20 @@ public class PottsgroveTeleOp extends OpMode{
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
+    //Drive Motors
     private DcMotor leftMotor = null;
     private DcMotor rightMotor = null;
+
+    //Sweeper
+    private boolean sweeperOn = false;
+    private DcMotor sweeperMotor = null;
+
+    //Conveyor
+    private boolean conveyorOn = false;
+    private DcMotor conveyorMotor = null;
+
+    //Lift
+    private DcMotor liftMotor = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -25,18 +37,19 @@ public class PottsgroveTeleOp extends OpMode{
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        /* eg: Initialize the hardware variables. Note that the strings used here as parameters
-         * to 'get' must correspond to the names assigned during the robot configuration
-         * step (using the FTC Robot Controller app on the phone).
-         */
+        //drive
         leftMotor  = hardwareMap.dcMotor.get("left_drive");
         rightMotor = hardwareMap.dcMotor.get("right_drive");
 
-        // eg: Set the drive motor directions:
-        // Reverse the motor that runs backwards when connected directly to the battery
-        // leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        // rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        // telemetry.addData("Status", "Initialized");
+        //sweeper
+        sweeperMotor = hardwareMap.dcMotor.get("sweeper");
+
+        //conveyor
+        conveyorMotor = hardwareMap.dcMotor.get("conveyor");
+
+        //lift
+        liftMotor = hardwareMap.dcMotor.get("lift");
+
     }
 
     /*
@@ -61,13 +74,41 @@ public class PottsgroveTeleOp extends OpMode{
     public void loop() {
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-        // eg: Run wheels in tank mode (note: The joystick goes negative when pushed forwards)
+        //tank drive forward
         leftMotor.setPower(gamepad1.left_trigger);
         rightMotor.setPower(-gamepad1.right_trigger);
+
+        //tank drive backward
         if(gamepad1.left_bumper)
-            leftMotor.setPower(-10);
+            leftMotor.setPower(-50);
         if(gamepad1.right_bumper)
-            rightMotor.setPower(10);
+            rightMotor.setPower(50);
+
+        //Sweeper control
+        if(gamepad1.a)
+            sweeperOn = !sweeperOn;
+
+        if(sweeperOn)
+            sweeperMotor.setPower(100);
+        else
+            sweeperMotor.setPower(0);
+
+        //Conveyor
+        if(gamepad1.b)
+            conveyorOn = !conveyorOn;
+
+        if(conveyorOn)
+            conveyorMotor.setPower(100);
+        else
+            conveyorMotor.setPower(0);
+
+        //Lift
+        if(gamepad1.dpad_up)
+            liftMotor.setPower(-60);
+        else if(gamepad1.dpad_down)
+            liftMotor.setPower(60);
+
+
     }
 
     /*
