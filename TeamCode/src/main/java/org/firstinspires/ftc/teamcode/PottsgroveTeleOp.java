@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by jthieme on 11/29/16.
@@ -27,9 +28,8 @@ public class PottsgroveTeleOp extends OpMode{
     private boolean conveyorOn = false;
     private DcMotor conveyorMotor = null;
 
-    //Lift
-    private DcMotor liftMotor = null;
-
+    //Launcher
+    private DcMotor launcherMotor = null;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -47,8 +47,8 @@ public class PottsgroveTeleOp extends OpMode{
         //conveyor
         conveyorMotor = hardwareMap.dcMotor.get("conveyor");
 
-        //lift
-        liftMotor = hardwareMap.dcMotor.get("lift");
+        //launcher
+        launcherMotor = hardwareMap.dcMotor.get("launcher");
 
     }
 
@@ -74,39 +74,32 @@ public class PottsgroveTeleOp extends OpMode{
     public void loop() {
         telemetry.addData("Status", "Running: " + runtime.toString());
 
-        //tank drive forward
+        //tank drive backward
         leftMotor.setPower(gamepad1.left_trigger);
         rightMotor.setPower(-gamepad1.right_trigger);
 
-        //tank drive backward
+        //tank drive forward
         if(gamepad1.left_bumper)
-            leftMotor.setPower(-50);
+            leftMotor.setPower(-1);
         if(gamepad1.right_bumper)
-            rightMotor.setPower(50);
+            rightMotor.setPower(1);
 
         //Sweeper control
         if(gamepad1.a)
-            sweeperOn = !sweeperOn;
-
-        if(sweeperOn)
-            sweeperMotor.setPower(100);
+            sweeperMotor.setPower(1);
         else
             sweeperMotor.setPower(0);
 
         //Conveyor
         if(gamepad1.b)
-            conveyorOn = !conveyorOn;
-
-        if(conveyorOn)
-            conveyorMotor.setPower(100);
+            conveyorMotor.setPower(1);
         else
             conveyorMotor.setPower(0);
 
-        //Lift
-        if(gamepad1.dpad_up)
-            liftMotor.setPower(-60);
-        else if(gamepad1.dpad_down)
-            liftMotor.setPower(60);
+        //Launcher
+        float launchSpeed = gamepad1.left_stick_y;
+        launchSpeed = Range.clip(launchSpeed, -1, 1);
+        launcherMotor.setPower((launchSpeed));
 
 
     }
